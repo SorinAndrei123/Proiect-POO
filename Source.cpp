@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<string>
+#include<fstream>
 using namespace std;
 
  enum Categorie{tehnologie,igienaPersonala,bacanie,fashion,sport,birotica,jucarii,necunoscut};
@@ -191,8 +192,39 @@ public:
 	operator int() {
 		return this->nrCautariProdusInUltimele24h;
 	}
+	//scriere in fisier binar a produselor.M-am gandit ca ne va trebui oricum mai incolo cand vom stoca produsele magazinului
+	void salvareInFisierBinar(ofstream& fisierBinar) {
+		int dimensiuneNumeProdus = strlen(numeProdus) + 1;
+		fisierBinar.write((char*)&dimensiuneNumeProdus, sizeof(int));
+		fisierBinar.write(numeProdus, sizeof(char) * dimensiuneNumeProdus);
+		fisierBinar.write((char*)&pret, sizeof(float));
+		fisierBinar.write((char*)&cantitateDisponibila, sizeof(double));
+		int dimensiuneDescriere = descriere.length() + 1;
+		fisierBinar.write((char*)&dimensiuneDescriere, sizeof(int));
+		fisierBinar.write(descriere.c_str(), sizeof(string) * dimensiuneDescriere);
+		fisierBinar.write((char*)&categorie, sizeof(Categorie));
+		fisierBinar.write((char*)&nrCautariProdusInUltimele24h, sizeof(int));
+		
 
-
+	}
+	void citireDinFisierBinar(ifstream& fisierBinar) {
+		delete this->numeProdus;
+		int dimensiuneNumeProdus;
+		char aux[100];
+		fisierBinar.read((char*)&dimensiuneNumeProdus, sizeof(int));
+		fisierBinar.read(aux, sizeof(char) * dimensiuneNumeProdus);
+		this->numeProdus = new char[strlen(aux) + 1];
+		strcpy(this->numeProdus, aux);
+		fisierBinar.read((char*)&pret, sizeof(float));
+		fisierBinar.read((char*)&cantitateDisponibila, sizeof(double));
+		int dimensiuneDescriere;
+		fisierBinar.read((char*)&dimensiuneDescriere, sizeof(int));
+		char auxiliar[100];
+		fisierBinar.read(auxiliar, dimensiuneDescriere * sizeof(char));
+		this->descriere = string(auxiliar);
+		fisierBinar.read((char*)&categorie, sizeof(Categorie));
+		fisierBinar.read((char*)&nrCautariProdusInUltimele24h, sizeof(int));
+	}
 	
 };
 int Produs::contor = 1;
@@ -217,6 +249,28 @@ ostream& operator <<(ostream& out, Produs& produs) {
 void main() {
 	Produs p1("pasta de dinti", 10, 100, "este foarte mentolata", Categorie::igienaPersonala, 100);
 	cout << p1;
+	cout << "-------------" << endl;
+	Produs p2;
+	ofstream fisier("fisier.dat", ios::binary | ios::out);
+	if (fisier.is_open()) {
+		p1.salvareInFisierBinar(fisier);
+		fisier.close();
+		
+	}
+	else {
+		cout << "fisierul nu a putut fi deschis" << endl;
+	}
+
+	ifstream fisierIntrare("fisier.dat", ios::binary | ios::in);
+	if (fisierIntrare.is_open()) {
+		p2.citireDinFisierBinar(fisierIntrare);
+		fisierIntrare.close();
+
+	}
+	else {
+		cout << "fisieurl nu a putut fi deschis" << endl;
+	}
+	cout << p2;
 
 
 }
