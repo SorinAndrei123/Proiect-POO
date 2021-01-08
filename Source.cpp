@@ -14,7 +14,7 @@ protected:
 	string descriere;
 	int nrCautariProdusInUltimele24h;
 public:
-	
+
 	//constructor default
 	Produs() :idProdus(1) {
 		this->numeProdus = new char[strlen("Necunoscut") + 1];
@@ -26,7 +26,7 @@ public:
 
 	}
 	//constructor cu toti parametrii
-	Produs(const char*numeProdus,float pret,double cantitateDisponibila,string descriere,int nrCautariProdusInUltimele24h) :idProdus(contor++) {
+	Produs(const char* numeProdus, float pret, double cantitateDisponibila, string descriere, int nrCautariProdusInUltimele24h) :idProdus(contor++) {
 		if (numeProdus != nullptr && strlen(numeProdus) > 2) {
 			this->numeProdus = new char[strlen(numeProdus) + 1];
 			strcpy(this->numeProdus, numeProdus);
@@ -38,18 +38,18 @@ public:
 		if (cantitateDisponibila > 0) {
 			this->cantitateDisponibila = cantitateDisponibila;
 
-	}
+		}
 		if (descriere.length() > 6) {
 			this->descriere = descriere;
 		}
-	
-		
+
+
 		if (nrCautariProdusInUltimele24h >= 0) {
 			this->nrCautariProdusInUltimele24h = nrCautariProdusInUltimele24h;
 
 		}
-		
-}//constructor de copiere
+
+	}//constructor de copiere
 	Produs(const Produs& p) :idProdus(p.idProdus) {
 		this->numeProdus = new char[strlen(p.numeProdus) + 1];
 		strcpy(this->numeProdus, p.numeProdus);
@@ -128,8 +128,8 @@ public:
 			this->nrCautariProdusInUltimele24h = nrCautariNoi;
 		}
 	}
-	
-	
+
+
 
 	friend ostream& operator <<(ostream& out, Produs& produs);
 
@@ -137,7 +137,7 @@ public:
 	float operator +(float valoare) {
 		return this->pret + valoare;
 	}
-	
+
 	//operator - pentru a scadea pretul unui produs
 	float operator -(float valoare) {
 		return this->pret - valoare;
@@ -158,7 +158,7 @@ public:
 		fisierBinar.write((char*)&dimensiuneDescriere, sizeof(int));
 		fisierBinar.write(descriere.c_str(), sizeof(string) * dimensiuneDescriere);
 		fisierBinar.write((char*)&nrCautariProdusInUltimele24h, sizeof(int));
-		
+
 
 	}
 	void citireDinFisierBinar(ifstream& fisierBinar) {
@@ -178,7 +178,7 @@ public:
 		this->descriere = string(auxiliar);
 		fisierBinar.read((char*)&nrCautariProdusInUltimele24h, sizeof(int));
 	}
-	
+
 };
 class TelefonMobil :Produs {
 	string producator;
@@ -214,15 +214,153 @@ public:
 
 
 };
+class Client {
+
+	string nume;
+	string prenume;
+	string adresa;
+	string email;
+public:
+	Client() {
+		this->nume = "Tzanca";
+		this->prenume = "Uraganu";
+		this->adresa = "Ferentari,aleea livezilor";
+		this->email = "tzancabomdardierul@manele.ro";
+	}
+	//am facut constructor doar cu nume si prenume pentru atunci cand intram prima oara in magazin 
+	Client(string nume, string prenume) {
+		if (nume.length() > 3) {
+			this->nume = nume;
+		}
+		if (prenume.length() > 3) {
+			this->prenume = prenume;
+		}
+	}
+	Client(string nume, string prenume, string adresa, string email) {
+		if (nume.length() > 3) {
+			this->nume = nume;
+		}
+		if (prenume.length() > 3) {
+			this->prenume = prenume;
+		}
+		if (adresa.length() > 10) {
+			this->adresa = adresa;
+		}
+		else {
+			throw new exception("adresa invalida");
+		}
+		if (email.length() > 5 && email.find("@")!=string::npos && (email.find(".com") != string::npos || email.find(".ro") != string::npos) ){
+			this->email=email;
+		}
+		else {
+			throw new exception("formatul emailului nu este valid");
+		}
+		
+	}
+	//constructor de copiere
+	Client(const Client& c) {
+		this->nume = c.nume;
+		this->prenume = c.prenume;
+		this->adresa = c.adresa;
+		this->email = c.email;
+
+	}
+	//operatorul =
+	Client& operator=(const Client& c) {
+		if (this != &c) {
+			this->nume = c.nume;
+			this->prenume = c.prenume;
+			this->adresa = c.adresa;
+			this->email = c.email;
+		}
+		return *this;
+	}
+	string getNume() {
+		return this->nume;
+	}
+	void setNume(string numeNou) {
+		if (numeNou.length() > 3) {
+			this->nume = numeNou;
+		}
+	}
+	string getPrenume() {
+		return this->prenume;
+	}
+	void setPrenume(string prenumeNou) {
+		if (prenumeNou.length() > 3) {
+			this->prenume = prenumeNou;
+		}
+
+	}
+	string getAdresa() {
+		return this->adresa;
+	}
+	void setAdresa(string adresaNoua) {
+		if (adresaNoua.length() > 10) {
+			this->adresa = adresaNoua;
+		}
+	}
+	string getEmail() {
+		return this->email;
+	}
+	void setEmail(string emailNou) {
+		if (emailNou.length() > 5 && emailNou.find("@") != string::npos && (emailNou.find(".com") != string::npos || emailNou.find(".ro") != string::npos)) {
+			this->email = emailNou;
+		}
+	}
+	
+	void afisareClient() {
+		cout << "nume client: " << nume << " ,prenume client: " << prenume << ",adresa: " << adresa << ", adresa de email: " << email << endl;
+
+
+	}
+	friend ofstream& operator <<(ofstream& fisierBinar,Client&c) {
+		int dimensiuneNume = c.nume.length() + 1;
+		fisierBinar.write((char*)&dimensiuneNume, sizeof(int));
+		fisierBinar.write(c.nume.c_str(), sizeof(string) * dimensiuneNume);
+		int dimensiunePrenume = c.prenume.length() + 1;
+		fisierBinar.write((char*)&dimensiunePrenume, sizeof(int));
+		fisierBinar.write(c.prenume.c_str(), sizeof(string) * dimensiunePrenume);
+		int dimensiuneAdresa = c.adresa.length() + 1;
+		fisierBinar.write((char*)&dimensiuneAdresa, sizeof(int));
+		fisierBinar.write(c.adresa.c_str(), sizeof(string) * dimensiuneAdresa);
+		int dimensiuneEmail = c.email.length() + 1;
+		fisierBinar.write((char*)&dimensiuneEmail, sizeof(int));
+		fisierBinar.write(c.email.c_str(), sizeof(string) * dimensiuneEmail);
+
+	
+	}
+	friend istream& operator>>(ifstream& fisierBinar, Client& c) {
+		int dimensiuneNume, dimensiunePrenume, dimensiuneAdresa, dimensiuneEmail;
+		fisierBinar.read((char*)&dimensiuneNume, sizeof(int));
+		char aux1[100];
+		fisierBinar.read(aux1, sizeof(char) * dimensiuneNume);
+		c.nume = (string)aux1;
+		fisierBinar.read((char*)&dimensiunePrenume, sizeof(int));
+		char aux2[100];
+		fisierBinar.read(aux2, sizeof(char) * dimensiunePrenume);
+		c.prenume = (string)aux2;
+		fisierBinar.read((char*)&dimensiuneAdresa, sizeof(int));
+		char aux3[100];
+		fisierBinar.read(aux3, sizeof(char) * dimensiuneAdresa);
+		c.adresa = (string)aux3;
+		fisierBinar.read((char*)&dimensiuneEmail, sizeof(int));
+		char aux4[100];
+		fisierBinar.read(aux4, sizeof(char) * dimensiuneEmail);
+		c.email = (string)aux4;
+	}
+
+};
+
 int Produs::contor = 1;
 ostream& operator <<(ostream& out, Produs& produs) {
 	out << "nume produs: " << produs.numeProdus << endl
-		<< "pret: " << produs.pret <<" lei"<<endl
+		<< "pret: " << produs.pret << " lei" << endl
 		<< "cantitate disponibila: " << produs.cantitateDisponibila << endl
 		<< "descriere: " << produs.descriere << endl
 		<< "nr cautari in ultimele 24 ore: " << produs.nrCautariProdusInUltimele24h << " ori." << endl;
 	return out;
-		
+
 }
 
 
@@ -241,7 +379,7 @@ void main() {
 	if (fisier.is_open()) {
 		p1.salvareInFisierBinar(fisier);
 		fisier.close();
-		
+
 	}
 	else {
 		cout << "fisierul nu a putut fi deschis" << endl;
@@ -257,8 +395,7 @@ void main() {
 		cout << "fisieurl nu a putut fi deschis" << endl;
 	}
 	cout << p2;
-
-
+	Client c1("preda", "sorin", "aleea salaj nr.10", "sorinpreda045@gmail.com");
+	
+	
 }
-
-
