@@ -4,15 +4,14 @@
 #include<fstream>
 using namespace std;
 
- enum Categorie{tehnologie,igienaPersonala,bacanie,fashion,sport,birotica,jucarii,necunoscut};
 class Produs {
 	const int idProdus;
 	static int contor;
+protected:
 	char* numeProdus;
 	float pret;
 	double cantitateDisponibila;
 	string descriere;
-	Categorie categorie;
 	int nrCautariProdusInUltimele24h;
 public:
 	
@@ -23,12 +22,11 @@ public:
 		this->pret = 0;
 		this->cantitateDisponibila = 0;
 		this->descriere = "Nu cunoastem acest produs.Este prea nou...";
-		this->categorie = Categorie::necunoscut;
 		this->nrCautariProdusInUltimele24h = 0;
 
 	}
 	//constructor cu toti parametrii
-	Produs(const char*numeProdus,float pret,double cantitateDisponibila,string descriere,Categorie categorie,int nrCautariProdusInUltimele24h) :idProdus(contor++) {
+	Produs(const char*numeProdus,float pret,double cantitateDisponibila,string descriere,int nrCautariProdusInUltimele24h) :idProdus(contor++) {
 		if (numeProdus != nullptr && strlen(numeProdus) > 2) {
 			this->numeProdus = new char[strlen(numeProdus) + 1];
 			strcpy(this->numeProdus, numeProdus);
@@ -45,11 +43,6 @@ public:
 			this->descriere = descriere;
 		}
 	
-		if (categorie == Categorie::bacanie || categorie == Categorie::birotica || categorie == Categorie::fashion || categorie == Categorie::igienaPersonala || categorie == Categorie::jucarii
-			|| categorie == Categorie::sport || categorie == Categorie::tehnologie) {
-			this->categorie = categorie;
-
-		}
 		
 		if (nrCautariProdusInUltimele24h >= 0) {
 			this->nrCautariProdusInUltimele24h = nrCautariProdusInUltimele24h;
@@ -63,7 +56,6 @@ public:
 		this->pret = p.pret;
 		this->cantitateDisponibila = p.cantitateDisponibila;
 		this->descriere = p.descriere;
-		this->categorie = p.categorie;
 		this->nrCautariProdusInUltimele24h = p.nrCautariProdusInUltimele24h;
 	}
 	//destructor
@@ -81,7 +73,6 @@ public:
 			this->pret = p.pret;
 			this->cantitateDisponibila = p.cantitateDisponibila;
 			this->descriere = p.descriere;
-			this->categorie = p.categorie;
 			this->nrCautariProdusInUltimele24h = p.nrCautariProdusInUltimele24h;
 		}
 		else {
@@ -137,43 +128,7 @@ public:
 			this->nrCautariProdusInUltimele24h = nrCautariNoi;
 		}
 	}
-	void setCategorie(Categorie categorieNoua) {
-
-		if (categorieNoua == Categorie::bacanie || categorieNoua == Categorie::birotica || categorieNoua == Categorie::fashion || categorieNoua == Categorie::igienaPersonala || categorieNoua == Categorie::jucarii
-			|| categorieNoua == Categorie::sport || categorieNoua == Categorie::tehnologie) {
-			this->categorie = categorieNoua;
-		}
-	}
-
-	//getter pentru a obtine in char categoria, nu cifra
-	  const char* obtinereCategorie() {
-		switch (this->categorie) {
-		case Categorie::bacanie:
-			return "bacanie";
-			break;
-		case Categorie::birotica:
-			return "birotica";
-			break;
-		case Categorie::fashion:
-			return "fashion";
-			break;
-		case Categorie::igienaPersonala:
-			return "igiena personala";
-			break;
-		case Categorie::jucarii:
-			return "jucarii";
-			break;
-		case Categorie::sport:
-			return "articole sportive";
-			break;
-		case Categorie::tehnologie:
-			return "tehnologie";
-			break;
-		default:
-			return "necunoscut";
-			break;
-		}
-	}
+	
 	
 
 	friend ostream& operator <<(ostream& out, Produs& produs);
@@ -202,7 +157,6 @@ public:
 		int dimensiuneDescriere = descriere.length() + 1;
 		fisierBinar.write((char*)&dimensiuneDescriere, sizeof(int));
 		fisierBinar.write(descriere.c_str(), sizeof(string) * dimensiuneDescriere);
-		fisierBinar.write((char*)&categorie, sizeof(Categorie));
 		fisierBinar.write((char*)&nrCautariProdusInUltimele24h, sizeof(int));
 		
 
@@ -222,10 +176,43 @@ public:
 		char auxiliar[100];
 		fisierBinar.read(auxiliar, dimensiuneDescriere * sizeof(char));
 		this->descriere = string(auxiliar);
-		fisierBinar.read((char*)&categorie, sizeof(Categorie));
 		fisierBinar.read((char*)&nrCautariProdusInUltimele24h, sizeof(int));
 	}
 	
+};
+class TelefonMobil :Produs {
+	string producator;
+	float diagonala;
+	double memorieStocare;
+	int memorieRam;
+public:
+	//constructor default 
+	TelefonMobil() :Produs() {
+		this->producator = "Samsung";
+		this->diagonala = 10;
+		this->memorieStocare = 64;
+		this->memorieRam = 8;
+	}
+	TelefonMobil(const char* numeProdus, float pret, double cantitateDisponibila, string descriere, int nrCautariProdusInUltimele24h
+		, string producator, float diagonala, double memorieStocare, int memorieRam) :Produs(numeProdus, pret, cantitateDisponibila, descriere, nrCautariProdusInUltimele24h) {
+		if (producator.empty()) {
+			throw new exception("campul nu poate fi gol");
+		}
+		else {
+			this->producator = producator;
+		}
+		if (diagonala > 5) {
+			this->diagonala = diagonala;
+		}
+		if (memorieStocare > 8) {
+			this->memorieStocare = memorieStocare;
+		}
+		if (memorieRam > 2) {
+			this->memorieRam = memorieRam;
+		}
+	}
+
+
 };
 int Produs::contor = 1;
 ostream& operator <<(ostream& out, Produs& produs) {
@@ -233,7 +220,6 @@ ostream& operator <<(ostream& out, Produs& produs) {
 		<< "pret: " << produs.pret <<" lei"<<endl
 		<< "cantitate disponibila: " << produs.cantitateDisponibila << endl
 		<< "descriere: " << produs.descriere << endl
-		<< "categorie: " << produs.obtinereCategorie() << endl
 		<< "nr cautari in ultimele 24 ore: " << produs.nrCautariProdusInUltimele24h << " ori." << endl;
 	return out;
 		
@@ -247,7 +233,7 @@ ostream& operator <<(ostream& out, Produs& produs) {
 
 
 void main() {
-	Produs p1("pasta de dinti", 10, 100, "este foarte mentolata", Categorie::igienaPersonala, 100);
+	Produs p1("pasta de dinti", 10, 100, "este foarte mentolata", 100);
 	cout << p1;
 	cout << "-------------" << endl;
 	Produs p2;
