@@ -180,40 +180,7 @@ public:
 	}
 
 };
-class TelefonMobil :Produs {
-	string producator;
-	float diagonala;
-	double memorieStocare;
-	int memorieRam;
-public:
-	//constructor default 
-	TelefonMobil() :Produs() {
-		this->producator = "Samsung";
-		this->diagonala = 10;
-		this->memorieStocare = 64;
-		this->memorieRam = 8;
-	}
-	TelefonMobil(const char* numeProdus, float pret, double cantitateDisponibila, string descriere, int nrCautariProdusInUltimele24h
-		, string producator, float diagonala, double memorieStocare, int memorieRam) :Produs(numeProdus, pret, cantitateDisponibila, descriere, nrCautariProdusInUltimele24h) {
-		if (producator.empty()) {
-			throw new exception("campul nu poate fi gol");
-		}
-		else {
-			this->producator = producator;
-		}
-		if (diagonala > 5) {
-			this->diagonala = diagonala;
-		}
-		if (memorieStocare > 8) {
-			this->memorieStocare = memorieStocare;
-		}
-		if (memorieRam > 2) {
-			this->memorieRam = memorieRam;
-		}
-	}
 
-
-};
 class Client {
 
 	string nume;
@@ -351,6 +318,165 @@ public:
 	}
 
 };
+//clasa cos de cumparaturi,mostenire de tip has a client si un vector de produse
+class CosDeCumparaturi  {
+	Client client;
+	Produs* produse;
+	int nrProduseInCos;
+	//am luat acest vector pentru a sti din fiecare produs din cos cate bucati a comandat
+	int* nrProduseComandateDinFiecareTip;
+public:
+	//constructor default 
+	CosDeCumparaturi() {
+		this->nrProduseInCos = 0;
+	}
+	//constructor cu parametrii
+	CosDeCumparaturi(Client client, int nrProduseInCos, Produs* produse,int* nrProduseComandateDinFiecareTip) {
+		this->client = client;
+		if (nrProduseInCos > 0) {
+			this->nrProduseInCos = nrProduseInCos;
+		}
+			this->produse = new Produs[nrProduseInCos];
+			for (int i = 0; i < nrProduseInCos; i++) {
+				this->produse[i] = produse[i];
+			}
+			if (nrProduseComandateDinFiecareTip != nullptr) {
+				this->nrProduseComandateDinFiecareTip = new int[nrProduseInCos];
+				for (int i = 0; i < nrProduseInCos; i++) {
+					this->nrProduseComandateDinFiecareTip[i] = nrProduseComandateDinFiecareTip[i];
+				}
+			}
+		
+	}
+	//constructor de copiere
+	CosDeCumparaturi(const CosDeCumparaturi& c) {
+		this->client = c.client;
+		this->nrProduseInCos = c.nrProduseInCos;
+		this->produse = new Produs[c.nrProduseInCos];
+		for (int i = 0; i < c.nrProduseInCos; i++) {
+			this->produse[i] = c.produse[i];
+		}
+		this->nrProduseComandateDinFiecareTip = new int[c.nrProduseInCos];
+		for (int i = 0; i < c.nrProduseInCos; i++) {
+			this->nrProduseComandateDinFiecareTip[i] = c.nrProduseComandateDinFiecareTip[i];
+		}
+
+		
+
+	}
+	//destructor
+	~CosDeCumparaturi() {
+		if (this->produse != nullptr) {
+			delete[]this->produse;
+		}
+		if (this->nrProduseComandateDinFiecareTip != nullptr) {
+			delete[]this->nrProduseComandateDinFiecareTip;
+		}
+	}
+	//supraincarcare operator =
+	CosDeCumparaturi& operator =(const CosDeCumparaturi& c) {
+		if (this != &c) {
+			delete[]this->produse;
+			delete[]this->nrProduseComandateDinFiecareTip;
+			this->client = c.client;
+			this->nrProduseInCos = c.nrProduseInCos;
+			this->produse = new Produs[c.nrProduseInCos];
+			for (int i = 0; i < c.nrProduseInCos; i++) {
+				this->produse[i] = c.produse[i];
+			}
+			this->nrProduseComandateDinFiecareTip = new int[c.nrProduseInCos];
+			for (int i = 0; i < c.nrProduseInCos; i++) {
+				this->nrProduseComandateDinFiecareTip[i] = c.nrProduseComandateDinFiecareTip[i];
+			}
+
+
+		}
+		return*this;
+	}
+	Client getClient() {
+		return this->client;
+	}
+	void setClient(Client clientNou) {
+		this->client = clientNou;
+	}
+	int getNrProduseInCos() {
+		return this->nrProduseInCos;
+	}
+	Produs* getProduse() {
+		return this->produse;
+	}
+	void setProduse(Produs* produseNoi,int nrProduseNou) {
+		if (produseNoi != nullptr) {
+			delete[]this->produse;
+			this->nrProduseInCos = nrProduseNou;
+			this->produse = new Produs[nrProduseNou];
+			for (int i = 0; i < nrProduseNou; i++) {
+				this->produse[i] = produseNoi[i];
+			}
+		}
+	}
+	int* getNrProduseComandateDinFiecareTip() {
+		return this->nrProduseComandateDinFiecareTip;
+	}
+	void setNrProduseComandateDinFiecareTip(int* vectorNou) {
+		if (vectorNou != nullptr) {
+			delete[]this->nrProduseComandateDinFiecareTip;
+		}
+		this->nrProduseComandateDinFiecareTip = new int[nrProduseInCos];
+		for (int i = 0; i < nrProduseInCos; i++) {
+			this->nrProduseComandateDinFiecareTip[i] = vectorNou[i];
+		}
+	}
+
+	//supraincarcare operator index pentru a obtine un produs la alegere din vector
+	Produs& operator [](int index) {
+		if (index >= 0 && index < nrProduseInCos) {
+			return produse[index];
+		}
+	}
+	//afisare in consola a cosului de cumparaturi
+	void afisareCosDeCumparaturi() {
+		client.afisareClient();
+		cout << "are urmatoarele produse in cosul de cumparaturi :" << endl;
+			for (int i = 0; i < nrProduseInCos; i++) {
+				cout << produse[i] << "si a bagat in cos " << nrProduseComandateDinFiecareTip[i] << " produse." << endl;
+			
+				
+			}
+			
+			
+	}
+	//supraincarcare operator << pentru a scrie in fisier binar cosul de cumparaturi
+	friend ofstream& operator <<(ofstream& fisierBinar, CosDeCumparaturi& cos) {
+		fisierBinar << cos.client;
+		fisierBinar.write((char*)&cos.nrProduseInCos, sizeof(int));
+		for (int i = 0; i < cos.nrProduseInCos; i++) {
+			cos.produse[i].salvareInFisierBinar(fisierBinar);
+			fisierBinar.write((char*)cos.nrProduseComandateDinFiecareTip, sizeof(int) * cos.nrProduseInCos);
+		}
+		
+	}
+	//supraincarcare operator>> pentru a citi cosul de cumparaturi din fisier binar
+	friend ifstream& operator >>(ifstream& fisierBinar, CosDeCumparaturi& cos) {
+		delete[]cos.produse;
+		fisierBinar >> cos.client;
+		fisierBinar.read((char*)&cos.nrProduseInCos, sizeof(int));
+		cos.produse = new Produs[cos.nrProduseInCos];
+		for (int i = 0; i < cos.nrProduseInCos; i++) {
+			cos.produse[i].citireDinFisierBinar(fisierBinar);
+			fisierBinar.read((char*)cos.nrProduseComandateDinFiecareTip, sizeof(int) * cos.nrProduseInCos);
+		}
+	}
+
+};
+//interfata
+class StocDupaComenzi {
+public:
+	virtual void  calculStocRamasDupaComanda() = 0;
+};
+class PrelucrareComanda :CosDeCumparaturi, StocDupaComenzi {
+
+};
 
 int Produs::contor = 1;
 ostream& operator <<(ostream& out, Produs& produs) {
@@ -372,9 +498,10 @@ ostream& operator <<(ostream& out, Produs& produs) {
 
 void main() {
 	Produs p1("pasta de dinti", 10, 100, "este foarte mentolata", 100);
+	Produs p2("bulion", 10, 100, "este foarte gustos", 100);
+	Produs p3;
 	cout << p1;
 	cout << "-------------" << endl;
-	Produs p2;
 	ofstream fisier("fisier.dat", ios::binary | ios::out);
 	if (fisier.is_open()) {
 		p1.salvareInFisierBinar(fisier);
@@ -387,15 +514,21 @@ void main() {
 
 	ifstream fisierIntrare("fisier.dat", ios::binary | ios::in);
 	if (fisierIntrare.is_open()) {
-		p2.citireDinFisierBinar(fisierIntrare);
+		p3.citireDinFisierBinar(fisierIntrare);
 		fisierIntrare.close();
 
 	}
 	else {
 		cout << "fisieurl nu a putut fi deschis" << endl;
 	}
-	cout << p2;
+	cout << p3;
 	Client c1("preda", "sorin", "aleea salaj nr.10", "sorinpreda045@gmail.com");
+	Produs vector[] = { p1,p2 };
+	int nrProduse[] = { 2,4 };
+	CosDeCumparaturi cosdecumparaturi1(c1, 2, vector,nrProduse);
+	cout << "-----------------AFISARE COS DE CUMPARATURI-------------------" << endl;
+	cosdecumparaturi1.afisareCosDeCumparaturi();
+
 	
 	
 }
